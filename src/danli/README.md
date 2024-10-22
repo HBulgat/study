@@ -31,7 +31,20 @@ public class Singleton{
 }
 ```
 ```java
-//双重检查，多线程安全，但是性能低
+public class Singleton{
+    private static Singleton instance;
+    private Singleton(){}
+    //这里直接给方法加锁，安全但是性能太差
+    public static synchronized Singleton getInstance(){
+        if(instance==null){
+            instance=new Singleton();
+        }
+        return instance;
+    }
+}
+```
+```java
+//双重检查，多线程安全，但是性能也不高
 public class Singleton{
     private static Singleton instance;
     private Singleton(){ }
@@ -106,10 +119,9 @@ new一个对象有几个步骤。
 2. 分配内存空间，初始化实例，
 3. 调用构造函数，
 4. 返回地址给引用。  
-- 而cpu为了优化程序，可能会进行指令重排序，打乱这3，4这几个步骤，导致实例内存还没分配，就被使用了。  
+- 而cpu为了优化程序，可能会进行指令重排序，打乱这3，4这几个步骤，导致内存空间被分配但未被初始化就返回，里面是一些随机的数据。  
 所以new一个对象的代码是无法保证顺序性的，因此，我们需要使用另一个关键字volatile(防止指令重排)保证对象实例化过程的顺序性。  
 *饿汉式中需要*
-
 ```java
 import java.io.Serializable;
 
